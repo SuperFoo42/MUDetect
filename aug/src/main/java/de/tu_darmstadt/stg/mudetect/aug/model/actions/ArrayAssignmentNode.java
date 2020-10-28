@@ -1,14 +1,15 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 public class ArrayAssignmentNode extends MethodCallNode {
-    public ArrayAssignmentNode(String arrayTypeName) {
-        super(arrayTypeName, "arrayset()");
+    public ArrayAssignmentNode(String arrayTypeName, int sourceLineNumber, ASTNode astNode) {
+        super(arrayTypeName, "arrayset()",sourceLineNumber,astNode);
     }
 
     public ArrayAssignmentNode(String arrayTypeName, int sourceLineNumber) {
-        super(arrayTypeName, "arrayset()", sourceLineNumber);
+        super(arrayTypeName, "arrayset()",sourceLineNumber);
     }
 
     @Override

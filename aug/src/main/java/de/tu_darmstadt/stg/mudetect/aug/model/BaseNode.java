@@ -1,6 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model;
 
 import de.tu_darmstadt.stg.mudetect.aug.visitors.BaseAUGLabelProvider;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.util.Optional;
 
@@ -10,11 +11,25 @@ public abstract class BaseNode implements Node {
     private final int id;
     private final int sourceLineNumber;
     private APIUsageGraph aug;
+    private final ASTNode correspondingASTNode;
 
-    protected BaseNode() { this(-1); }
+    protected BaseNode() {
+        this(-1, null);
+    }
+
+    protected BaseNode(ASTNode correspondingASTNode) {
+        this(-1, correspondingASTNode);
+    }
 
     protected BaseNode(int sourceLineNumber) {
         this.sourceLineNumber = sourceLineNumber;
+        this.id = nextNodeId++;
+        this.correspondingASTNode = null;
+    }
+
+    protected BaseNode(int sourceLineNumber, ASTNode correspondingASTNode) {
+        this.sourceLineNumber = sourceLineNumber;
+        this.correspondingASTNode = correspondingASTNode;
         this.id = nextNodeId++;
     }
 
@@ -53,5 +68,10 @@ public abstract class BaseNode implements Node {
             type = type.substring(0, type.length() - 4);
         }
         return type + ":" + new BaseAUGLabelProvider().getLabel(this);
+    }
+
+    @Override
+    public Optional<ASTNode> getCorrespondingASTNode() {
+        return Optional.ofNullable(correspondingASTNode);
     }
 }

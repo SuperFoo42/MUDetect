@@ -1,6 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model;
 
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -28,4 +29,6 @@ public interface Node extends Cloneable, Serializable {
     Node clone();
 
     <R> R apply(NodeVisitor<R> visitor);
+
+    public Optional<ASTNode> getCorrespondingASTNode();
 }

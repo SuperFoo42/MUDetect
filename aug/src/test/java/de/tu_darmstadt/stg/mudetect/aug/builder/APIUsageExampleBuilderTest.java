@@ -17,14 +17,14 @@ public class APIUsageExampleBuilderTest {
 
     @Test
     public void addMethodCall() {
-        APIUsageExample aug = buildAUG(SOME_LOCATION).withMethodCall(":id:", "O", "m()", 42).build();
+        APIUsageExample aug = buildAUG(SOME_LOCATION).withMethodCall(":id:", "O", "m()", 42, null).build();
 
         assertThat(aug, hasNode(methodCall("O", "m()")));
     }
 
     @Test
     public void addVariable() {
-        APIUsageExample aug = buildAUG(SOME_LOCATION).withVariable(":id:", "O", "o").build();
+        APIUsageExample aug = buildAUG(SOME_LOCATION).withVariable(":id:", "O", "o", null).build();
 
         assertThat(aug, hasNode(variable("O", "o")));
     }
@@ -32,8 +32,8 @@ public class APIUsageExampleBuilderTest {
     @Test
     public void addEdge() {
         APIUsageExample aug = buildAUG(SOME_LOCATION)
-                .withVariable(":varId:", "O", "o")
-                .withMethodCall(":methodId:", "O", "m()", 42)
+                .withVariable(":varId:", "O", "o", null)
+                .withMethodCall(":methodId:", "O", "m()", 42, null)
                 .withReceiverEdge(":varId:", ":methodId:").build();
 
         assertThat(aug, hasReceiverEdge(variable("O", "o"), methodCall("O", "m()")));

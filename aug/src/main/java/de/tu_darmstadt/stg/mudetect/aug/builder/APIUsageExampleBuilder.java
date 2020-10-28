@@ -11,6 +11,7 @@ import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.DefinitionEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ParameterEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.QualifierEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ReceiverEdge;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,101 +33,101 @@ public class APIUsageExampleBuilder {
 
     // Action Nodes
 
-    public APIUsageExampleBuilder withArrayAccess(String nodeId, String arrayTypeName, int sourceLineNumber) {
-        return withNode(nodeId, new ArrayAccessNode(arrayTypeName, sourceLineNumber));
+    public APIUsageExampleBuilder withArrayAccess(String nodeId, String arrayTypeName, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ArrayAccessNode(arrayTypeName, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withArrayAssignment(String nodeId, String baseType, int sourceLineNumber) {
-        return withNode(nodeId, new ArrayAssignmentNode(baseType, sourceLineNumber));
+    public APIUsageExampleBuilder withArrayAssignment(String nodeId, String baseType, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ArrayAssignmentNode(baseType, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withArrayCreation(String nodeId, String baseType, int sourceLineNumber) {
-        return withNode(nodeId, new ArrayCreationNode(baseType, sourceLineNumber));
+    public APIUsageExampleBuilder withArrayCreation(String nodeId, String baseType, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ArrayCreationNode(baseType, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withAssignment(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new AssignmentNode(sourceLineNumber));
+    public APIUsageExampleBuilder withAssignment(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new AssignmentNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withBreak(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new BreakNode(sourceLineNumber));
+    public APIUsageExampleBuilder withBreak(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new BreakNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withCast(String nodeId, String targetType, int sourceLineNumber) {
-        return withNode(nodeId, new CastNode(targetType, sourceLineNumber));
+    public APIUsageExampleBuilder withCast(String nodeId, String targetType, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new CastNode(targetType, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withConstructorCall(String nodeId, String typeName, int sourceLineNumber) {
-        return withNode(nodeId, new ConstructorCallNode(typeName, sourceLineNumber));
+    public APIUsageExampleBuilder withConstructorCall(String nodeId, String typeName, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ConstructorCallNode(typeName, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withContinue(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new ContinueNode(sourceLineNumber));
+    public APIUsageExampleBuilder withContinue(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ContinueNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withInfixOperator(String nodeId, String operator, int sourceLineNumber) {
-        return withNode(nodeId, new InfixOperatorNode(operator, sourceLineNumber));
+    public APIUsageExampleBuilder withInfixOperator(String nodeId, String operator, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new InfixOperatorNode(operator, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withMethodCall(String nodeId, String declaringTypeName, String methodSignature, int sourceLineNumber) {
-        return withNode(nodeId, new MethodCallNode(declaringTypeName, methodSignature, sourceLineNumber));
+    public APIUsageExampleBuilder withMethodCall(String nodeId, String declaringTypeName, String methodSignature, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new MethodCallNode(declaringTypeName, methodSignature, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withNullCheck(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new NullCheckNode(sourceLineNumber));
+    public APIUsageExampleBuilder withNullCheck(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new NullCheckNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withReturn(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new ReturnNode(sourceLineNumber));
+    public APIUsageExampleBuilder withReturn(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ReturnNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withSuperConstructorCall(String nodeId, String superTypeName, int sourceLineNumber) {
-        return withNode(nodeId, new SuperConstructorCallNode(superTypeName, sourceLineNumber));
+    public APIUsageExampleBuilder withSuperConstructorCall(String nodeId, String superTypeName, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new SuperConstructorCallNode(superTypeName, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withSuperMethodCall(String nodeId, String declaringTypeName, String methodSignature, int sourceLineNumber) {
-        return withNode(nodeId, new SuperMethodCallNode(declaringTypeName, methodSignature, sourceLineNumber));
+    public APIUsageExampleBuilder withSuperMethodCall(String nodeId, String declaringTypeName, String methodSignature, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new SuperMethodCallNode(declaringTypeName, methodSignature, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withThrow(String nodeId, int sourceLineNumber) {
-        return withNode(nodeId, new ThrowNode(sourceLineNumber));
+    public APIUsageExampleBuilder withThrow(String nodeId, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new ThrowNode(sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withCatch(String nodeId, String exceptionType, int sourceLineNumber) {
-        return withNode(nodeId, new CatchNode(exceptionType, sourceLineNumber));
+    public APIUsageExampleBuilder withCatch(String nodeId, String exceptionType, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new CatchNode(exceptionType, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withTypeCheck(String nodeId, String targetTypeName, int sourceLineNumber) {
-        return withNode(nodeId, new TypeCheckNode(targetTypeName, sourceLineNumber));
+    public APIUsageExampleBuilder withTypeCheck(String nodeId, String targetTypeName, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new TypeCheckNode(targetTypeName, sourceLineNumber, astNode));
     }
 
-    public APIUsageExampleBuilder withUnaryOperator(String nodeId, String operator, int sourceLineNumber) {
-        return withNode(nodeId, new UnaryOperatorNode(operator, sourceLineNumber));
+    public APIUsageExampleBuilder withUnaryOperator(String nodeId, String operator, int sourceLineNumber, ASTNode astNode) {
+        return withNode(nodeId, new UnaryOperatorNode(operator, sourceLineNumber, astNode));
     }
 
     // Data Nodes
 
-    public APIUsageExampleBuilder withAnonymousClassMethod(String nodeId, String baseType, String methodSignature) {
+    public APIUsageExampleBuilder withAnonymousClassMethod(String nodeId, String baseType, String methodSignature, ASTNode astNode) {
         return withNode(nodeId, new AnonymousClassMethodNode(baseType, methodSignature));
     }
 
-    public APIUsageExampleBuilder withAnonymousObject(String nodeId, String typeName) {
+    public APIUsageExampleBuilder withAnonymousObject(String nodeId, String typeName, ASTNode astNode) {
         return withNode(nodeId, new AnonymousObjectNode(typeName));
     }
 
-    public APIUsageExampleBuilder withException(String nodeId, String typeName, String variableName) {
+    public APIUsageExampleBuilder withException(String nodeId, String typeName, String variableName, ASTNode astNode) {
         return withNode(nodeId, new ExceptionNode(typeName, variableName));
     }
 
-    public APIUsageExampleBuilder withLiteral(String nodeId, String typeName, String value) {
+    public APIUsageExampleBuilder withLiteral(String nodeId, String typeName, String value, ASTNode astNode) {
         return withNode(nodeId, new LiteralNode(typeName, value));
     }
 
-    public APIUsageExampleBuilder withVariable(String nodeId, String dataTypeName, String variableName) {
+    public APIUsageExampleBuilder withVariable(String nodeId, String dataTypeName, String variableName, ASTNode astNode) {
         return withNode(nodeId, new VariableNode(dataTypeName, variableName));
     }
 
-    public APIUsageExampleBuilder withConstant(String nodeId, String dataType, String dataName, String dataValue) {
+    public APIUsageExampleBuilder withConstant(String nodeId, String dataType, String dataName, String dataValue, ASTNode astNode) {
         return withNode(nodeId, new ConstantNode(dataType, dataName, dataValue));
     }
 

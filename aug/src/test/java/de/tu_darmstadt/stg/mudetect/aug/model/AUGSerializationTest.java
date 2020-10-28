@@ -21,11 +21,11 @@ public class AUGSerializationTest {
         Location loc = new Location(projectName, filePath, methodSignature);
 
         APIUsageExample originalAUG = APIUsageExampleBuilder.buildAUG(loc)
-                .withAssignment("A1", 1)
-                .withConstant("A2", "int", "VAL", "1337")
+                .withAssignment("A1", 1, null)
+                .withConstant("A2", "int", "VAL", "1337", null)
                 .withReceiverEdge("A2", "A1")
-                .withMethodCall("A3", "T1", "foo1", 3)
-                .withMethodCall("A4", "T2", "foo2", 4)
+                .withMethodCall("A3", "T1", "foo1", 3, null)
+                .withMethodCall("A4", "T2", "foo2", 4, null)
                 .withOrderEdge("A1", "A3")
                 .withOrderEdge("A3", "A4").build();
 

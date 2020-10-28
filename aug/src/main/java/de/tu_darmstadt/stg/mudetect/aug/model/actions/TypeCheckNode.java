@@ -1,6 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 public class TypeCheckNode extends OperatorNode {
     private final String targetTypeName;
@@ -12,6 +13,11 @@ public class TypeCheckNode extends OperatorNode {
 
     public TypeCheckNode(String targetTypeName, int sourceLineNumber) {
         super("<instanceof>", sourceLineNumber);
+        this.targetTypeName = targetTypeName;
+    }
+
+    public TypeCheckNode(String targetTypeName, int sourceLineNumber, ASTNode astNode) {
+        super("<instanceof>", sourceLineNumber, astNode);
         this.targetTypeName = targetTypeName;
     }
 

@@ -164,110 +164,112 @@ public class AUGBuilder {
             String dataType = node.getDataType();
             String dataName = dataNode.getDataName();
             String dataValue = dataNode.getDataValue();
+            ASTNode astNode = dataNode.getAstNode();
             if (dataNode.isException() || dataType.endsWith("Exception") || dataType.endsWith("Error") || dataType.equals("Throwable")) {
                 // TODO there's Exception nodes in catch blocks without incoming THROW edges
-                builder.withException(nodeId, dataType, dataName);
+                builder.withException(nodeId, dataType, dataName,astNode);
                 return;
             } else if (node.astNodeType == ASTNode.SIMPLE_NAME) {
-                builder.withVariable(nodeId, dataType, dataName);
+                builder.withVariable(nodeId, dataType, dataName, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.FIELD_ACCESS) {
-                builder.withConstant(nodeId, dataType, dataName, dataValue);
+                builder.withConstant(nodeId, dataType, dataName, dataValue, astNode);
                 return;
             } else if (LITERAL_AST_NODE_TYPES.contains(node.astNodeType)) {
                 if (dataName != null) {
-                    builder.withConstant(nodeId, dataType, dataName, dataValue);
+                    builder.withConstant(nodeId, dataType, dataName, dataValue, astNode);
                     return;
                 } else {
-                    builder.withLiteral(nodeId, dataType, dataValue);
+                    builder.withLiteral(nodeId, dataType, dataValue, astNode);
                     return;
                 }
             } else if (node.astNodeType == ASTNode.METHOD_DECLARATION) {
                 // encoding of the methods of anonymous class instances
                 String[] info = splitDeclaringTypeAndSignature(dataName);
-                builder.withAnonymousClassMethod(nodeId, info[0], info[1]);
+                builder.withAnonymousClassMethod(nodeId, info[0], info[1], astNode);
                 return;
             } else {
-                builder.withAnonymousObject(nodeId, dataType);
+                builder.withAnonymousObject(nodeId, dataType, astNode);
                 return;
             }
         } else if (node instanceof EGroumActionNode) {
             int sourceLineNumber = node.getSourceLineNumber().orElse(-1);
+            ASTNode astNode = node.getAstNode();
             String label = node.getLabel();
             if (label.startsWith("{") && label.endsWith("}")) {
-                builder.withArrayCreation(nodeId, label.substring(1, label.length() - 1), sourceLineNumber);
+                builder.withArrayCreation(nodeId, label.substring(1, label.length() - 1), sourceLineNumber, astNode);
                 return;
             } else if (label.endsWith(".arrayget()")) {
                 String[] labelParts = splitDeclaringTypeAndSignature(label);
-                builder.withArrayAccess(nodeId, labelParts[0], sourceLineNumber);
+                builder.withArrayAccess(nodeId, labelParts[0], sourceLineNumber, astNode);
                 return;
             } else if (label.endsWith(".arrayset()")) {
                 String[] labelParts = splitDeclaringTypeAndSignature(label);
-                builder.withArrayAssignment(nodeId, labelParts[0], sourceLineNumber);
+                builder.withArrayAssignment(nodeId, labelParts[0], sourceLineNumber, astNode);
                 return;
             } else if (label.equals("<nullcheck>")) {
-                builder.withNullCheck(nodeId, sourceLineNumber);
+                builder.withNullCheck(nodeId, sourceLineNumber, astNode);
                 return;
             } else if (label.endsWith(".<catch>")) {
-                builder.withCatch(nodeId, label.substring(0, label.length() - 8), sourceLineNumber);
+                builder.withCatch(nodeId, label.substring(0, label.length() - 8), sourceLineNumber, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.METHOD_INVOCATION) {
                 String[] labelParts = splitDeclaringTypeAndSignature(label);
-                builder.withMethodCall(nodeId, labelParts[0], labelParts[1], sourceLineNumber);
+                builder.withMethodCall(nodeId, labelParts[0], labelParts[1], sourceLineNumber, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.SUPER_METHOD_INVOCATION) {
                 String[] labelParts = splitDeclaringTypeAndSignature(label);
-                builder.withSuperMethodCall(nodeId, labelParts[0], labelParts[1], sourceLineNumber);
+                builder.withSuperMethodCall(nodeId, labelParts[0], labelParts[1], sourceLineNumber, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.CLASS_INSTANCE_CREATION) {
                 String[] labelParts = splitDeclaringTypeAndSignature(label);
-                builder.withConstructorCall(nodeId, labelParts[0], sourceLineNumber);
+                builder.withConstructorCall(nodeId, labelParts[0], sourceLineNumber, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.CONSTRUCTOR_INVOCATION) {
                 /* constructor name for "this()" calls look like "Type()" */
                 String typeName = label.substring(0, label.length() - 2); // remove "()"
-                builder.withConstructorCall(nodeId, typeName, sourceLineNumber);
+                builder.withConstructorCall(nodeId, typeName, sourceLineNumber, astNode);
                 return;
             } else if (node.astNodeType == ASTNode.SUPER_CONSTRUCTOR_INVOCATION) {
                 String typeName = label.substring(0, label.length() - 2); // remove "()" from "Supertype()"
-                builder.withSuperConstructorCall(nodeId, typeName, sourceLineNumber);
+                builder.withSuperConstructorCall(nodeId, typeName, sourceLineNumber, astNode);
                 return;
             } else if (label.endsWith("<cast>")) {
                 String targetTypeName = splitDeclaringTypeAndSignature(label)[0];
-                builder.withCast(nodeId, targetTypeName, sourceLineNumber);
+                builder.withCast(nodeId, targetTypeName, sourceLineNumber, astNode);
                 return;
             } else if (JavaASTUtil.infixExpressionLables.containsValue(label)) {
                 // TODO capture non-generalized operator
-                builder.withInfixOperator(nodeId, label, sourceLineNumber);
+                builder.withInfixOperator(nodeId, label, sourceLineNumber, astNode);
                 return;
             } else if (ASSIGNMENT_OPERATORS.contains(label)) {
                 // this happens because we transform operators such as += and -= into and = and the respective
                 // operation, but do not apply the operator abstraction afterwards, i.e., this is actually a bug
                 // in the transformation.
                 // TODO ensure consistent handling of operators
-                builder.withInfixOperator(nodeId, label, sourceLineNumber);
+                builder.withInfixOperator(nodeId, label, sourceLineNumber, astNode);
                 return;
             } else if (UNARY_OPERATORS.contains(label)) {
-                builder.withUnaryOperator(nodeId, label, sourceLineNumber);
+                builder.withUnaryOperator(nodeId, label, sourceLineNumber, astNode);
                 return;
             } else if (label.equals("=")) {
-                builder.withAssignment(nodeId, sourceLineNumber);
+                builder.withAssignment(nodeId, sourceLineNumber, astNode);
                 return;
             } else if (label.endsWith("<instanceof>")) {
                 String checkTypeName = splitDeclaringTypeAndSignature(label)[0];
-                builder.withTypeCheck(nodeId, checkTypeName, sourceLineNumber);
+                builder.withTypeCheck(nodeId, checkTypeName, sourceLineNumber, astNode);
                 return;
             } else if (label.equals("break")) {
-                builder.withBreak(nodeId, sourceLineNumber);
+                builder.withBreak(nodeId, sourceLineNumber, astNode);
                 return;
             } else if (label.equals("continue")) {
-                builder.withContinue(nodeId, sourceLineNumber);
+                builder.withContinue(nodeId, sourceLineNumber, astNode);
                 return;
             } else if (label.equals("return")) {
-                builder.withReturn(nodeId, sourceLineNumber);
+                builder.withReturn(nodeId, sourceLineNumber, astNode);
                 return;
             } else if (label.equals("throw")) {
-                builder.withThrow(nodeId, sourceLineNumber);
+                builder.withThrow(nodeId, sourceLineNumber, astNode);
                 return;
             }
         }

@@ -2,7 +2,7 @@ package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
 import de.tu_darmstadt.stg.mudetect.aug.model.ActionNode;
 import de.tu_darmstadt.stg.mudetect.aug.model.BaseNode;
-import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 public abstract class OperatorNode extends BaseNode implements ActionNode {
     private final String operator;
@@ -13,6 +13,11 @@ public abstract class OperatorNode extends BaseNode implements ActionNode {
 
     OperatorNode(String operator, int sourceLineNumber) {
         super(sourceLineNumber);
+        this.operator = operator;
+    }
+
+    OperatorNode(String operator, int sourceLineNumber, ASTNode astNode) {
+        super(sourceLineNumber, astNode);
         this.operator = operator;
     }
 

@@ -3,6 +3,7 @@ package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 import de.tu_darmstadt.stg.mudetect.aug.model.ActionNode;
 import de.tu_darmstadt.stg.mudetect.aug.model.BaseNode;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.util.Optional;
 
@@ -17,6 +18,12 @@ public class MethodCallNode extends BaseNode implements ActionNode {
 
     public MethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber) {
         super(sourceLineNumber);
+        this.declaringTypeName = declaringTypeName;
+        this.methodSignature = methodSignature;
+    }
+
+    public MethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber, ASTNode astNode) {
+        super(sourceLineNumber, astNode);
         this.declaringTypeName = declaringTypeName;
         this.methodSignature = methodSignature;
     }
