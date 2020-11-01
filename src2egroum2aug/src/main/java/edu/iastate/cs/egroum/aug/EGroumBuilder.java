@@ -7,7 +7,6 @@ import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.Type;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
-import org.jgrapht.alg.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class EGroumBuilder {
 		return buildBatchGroums(new File(path), classpaths);
 	}
 
-	public ArrayList<Pair<EGroumGraph, CompilationUnit>> buildBatchWithAST(String path, String[] classpaths) {
+	public ArrayList<WithAST<EGroumGraph>> buildBatchWithAST(String path, String[] classpaths) {
 		buildStandardJars();
 		buildHierarchy(new File(path));
 		return buildBatchGroumsWithAST(new File(path), classpaths);
@@ -353,7 +352,7 @@ public class EGroumBuilder {
 		return groums;
 	}
 
-	private ArrayList<Pair<EGroumGraph, CompilationUnit>> buildBatchGroumsWithAST(File dir, String[] classpaths) {
+	private ArrayList<WithAST<EGroumGraph>> buildBatchGroumsWithAST(File dir, String[] classpaths) {
 		ArrayList<File> files = FileIO.getPaths(dir);
 		String[] paths = new String[files.size()];
 		for (int i = 0; i < files.size(); i++) {
@@ -382,15 +381,15 @@ public class EGroumBuilder {
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
 		parser.createASTs(paths, null, new String[0], r, null);
-		ArrayList<Pair<EGroumGraph, CompilationUnit>> groums = new ArrayList<>();
+		ArrayList<WithAST<EGroumGraph>> groums = new ArrayList<>();
 		for (String path : cus.keySet()) {
 			CompilationUnit cu = cus.get(path);
 			for (int i = 0 ; i < cu.types().size(); i++)
 				if (cu.types().get(i) instanceof TypeDeclaration)
-					groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new Pair<>(groum, cu)).collect(Collectors.toList()));
+					groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new WithAST<>(groum, cu)).collect(Collectors.toList()));
 		}
-		for (Pair<EGroumGraph, CompilationUnit> groum : groums) {
-			groum.first.setProjectName(dir.getAbsolutePath());
+		for (WithAST<EGroumGraph> groum : groums) {
+			groum.getElement().setProjectName(dir.getAbsolutePath());
 		}
 		return groums;
 	}
@@ -423,12 +422,12 @@ public class EGroumBuilder {
 		return groums;
 	}
 
-	public ArrayList<Pair<EGroumGraph, CompilationUnit>> buildGroumsWithAST(String sourceCode, String path, String name, String[] classpaths) {
-		ArrayList<Pair<EGroumGraph, CompilationUnit>> groums = new ArrayList<>();
+	public ArrayList<WithAST<EGroumGraph>> buildGroumsWithAST(String sourceCode, String path, String name, String[] classpaths) {
+		ArrayList<WithAST<EGroumGraph>> groums = new ArrayList<>();
 		CompilationUnit cu = (CompilationUnit) JavaASTUtil.parseSource(sourceCode, path, name, classpaths);
 		for (int i = 0 ; i < cu.types().size(); i++)
 			if (cu.types().get(i) instanceof TypeDeclaration)
-				groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new Pair<>(groum, cu)).collect(Collectors.toList()));
+				groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new WithAST<>(groum, cu)).collect(Collectors.toList()));
 		return groums;
 	}
 
