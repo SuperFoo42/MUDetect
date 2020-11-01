@@ -12,6 +12,8 @@ import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ParameterEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.QualifierEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ReceiverEdge;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.jgrapht.alg.util.Pair;
 
 import java.util.HashMap;
 import java.util.HashSet;

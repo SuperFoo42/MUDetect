@@ -4,6 +4,8 @@ import de.tu_darmstadt.stg.mudetect.aug.builder.APIUsageExampleBuilder;
 import de.tu_darmstadt.stg.mudetect.aug.model.*;
 import edu.iastate.cs.egroum.utils.JavaASTUtil;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.jgrapht.alg.util.Pair;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -57,13 +59,30 @@ public class AUGBuilder {
                 .collect(Collectors.toList());
     }
 
+    public Collection<Pair<APIUsageExample, CompilationUnit>> buildWithAST(String[] sourcePaths, String[] classpaths) {
+        EGroumBuilder builder = new EGroumBuilder(configuration);
+        return Arrays.stream(sourcePaths)
+                .flatMap(sourcePath -> builder.buildBatchWithAST(sourcePath, classpaths).stream())
+                .map(eGroumGraphCompilationUnitPair -> new Pair<>(toAUG(eGroumGraphCompilationUnitPair.first), eGroumGraphCompilationUnitPair.second))
+                .collect(Collectors.toList());
+    }
+
 	public Collection<APIUsageExample> build(String sourcePath, String[] classpaths) {
         return build(new String[] {sourcePath}, classpaths);
+    }
+
+    public Collection<Pair<APIUsageExample, CompilationUnit>> buildWithAST(String sourcePath, String[] classpaths) {
+        return buildWithAST(new String[] {sourcePath}, classpaths);
     }
 
     public Collection<APIUsageExample> build(String source, String basePath, String projectName, String[] classpath) {
         return new EGroumBuilder(configuration).buildGroums(source, basePath, projectName, classpath).stream()
                 .map(this::toAUG).collect(Collectors.toList());
+    }
+
+    public List<Pair<APIUsageExample, CompilationUnit>> buildWithAST(String source, String basePath, String projectName, String[] classpath) {
+        return new EGroumBuilder(configuration).buildGroumsWithAST(source, basePath, projectName, classpath).stream()
+                .map(eGroumGraphCompilationUnitPair -> new Pair<>(toAUG(eGroumGraphCompilationUnitPair.first), eGroumGraphCompilationUnitPair.second)).collect(Collectors.toList());
     }
 
     private APIUsageExample toAUG(EGroumGraph groum) {

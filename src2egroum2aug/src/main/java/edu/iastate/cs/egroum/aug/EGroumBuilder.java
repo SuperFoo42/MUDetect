@@ -7,12 +7,14 @@ import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.Type;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.*;
+import org.jgrapht.alg.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 public class EGroumBuilder {
     private final AUGConfiguration configuration;
@@ -33,6 +35,13 @@ public class EGroumBuilder {
 		buildHierarchy(new File(path));
 		return buildBatchGroums(new File(path), classpaths);
 	}
+
+	public ArrayList<Pair<EGroumGraph, CompilationUnit>> buildBatchWithAST(String path, String[] classpaths) {
+		buildStandardJars();
+		buildHierarchy(new File(path));
+		return buildBatchGroumsWithAST(new File(path), classpaths);
+	}
+
 
 	/**
 	 * @param classpaths
@@ -344,6 +353,48 @@ public class EGroumBuilder {
 		return groums;
 	}
 
+	private ArrayList<Pair<EGroumGraph, CompilationUnit>> buildBatchGroumsWithAST(File dir, String[] classpaths) {
+		ArrayList<File> files = FileIO.getPaths(dir);
+		String[] paths = new String[files.size()];
+		for (int i = 0; i < files.size(); i++) {
+			paths[i] = files.get(i).getAbsolutePath();
+		}
+		HashMap<String, CompilationUnit> cus = new HashMap<>();
+		FileASTRequestor r = new FileASTRequestor() {
+			@Override
+			public void acceptAST(String sourceFilePath, CompilationUnit cu) {
+				if (configuration.usageExamplePredicate.matches(sourceFilePath, cu))
+					cus.put(sourceFilePath, cu);
+			}
+		};
+		@SuppressWarnings("rawtypes")
+		Map options = JavaCore.getOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		parser.setCompilerOptions(options);
+		parser.setEnvironment(
+				classpaths == null ? new String[0] : classpaths,
+				new String[]{},
+				new String[]{},
+				true);
+		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
+		parser.createASTs(paths, null, new String[0], r, null);
+		ArrayList<Pair<EGroumGraph, CompilationUnit>> groums = new ArrayList<>();
+		for (String path : cus.keySet()) {
+			CompilationUnit cu = cus.get(path);
+			for (int i = 0 ; i < cu.types().size(); i++)
+				if (cu.types().get(i) instanceof TypeDeclaration)
+					groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new Pair<>(groum, cu)).collect(Collectors.toList()));
+		}
+		for (Pair<EGroumGraph, CompilationUnit> groum : groums) {
+			groum.first.setProjectName(dir.getAbsolutePath());
+		}
+		return groums;
+	}
+
 	private ArrayList<EGroumGraph> buildGroums(File file, String[] classpaths) {
 		ArrayList<EGroumGraph> groums = new ArrayList<>();
 		if (file.isDirectory()) {
@@ -369,6 +420,15 @@ public class EGroumBuilder {
 		for (int i = 0 ; i < cu.types().size(); i++)
 			if (cu.types().get(i) instanceof TypeDeclaration)
 				groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, ""));
+		return groums;
+	}
+
+	public ArrayList<Pair<EGroumGraph, CompilationUnit>> buildGroumsWithAST(String sourceCode, String path, String name, String[] classpaths) {
+		ArrayList<Pair<EGroumGraph, CompilationUnit>> groums = new ArrayList<>();
+		CompilationUnit cu = (CompilationUnit) JavaASTUtil.parseSource(sourceCode, path, name, classpaths);
+		for (int i = 0 ; i < cu.types().size(); i++)
+			if (cu.types().get(i) instanceof TypeDeclaration)
+				groums.addAll(buildGroums((TypeDeclaration) cu.types().get(i), path, "").stream().map(groum -> new Pair<>(groum, cu)).collect(Collectors.toList()));
 		return groums;
 	}
 
