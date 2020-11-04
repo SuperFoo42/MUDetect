@@ -2524,8 +2524,9 @@ public class EGroumGraph implements Serializable {
 
 	private void cleanUp() {
 		clearDefStore();
-		for (EGroumNode node : new HashSet<>(nodes))
-			node.astNode = null;
+		//we need the astNodes for a mapping from AUG back to code
+		//for (EGroumNode node : new HashSet<>(nodes))
+		//	node.astNode = null;
 	}
 
 	private void renameEdges() {
