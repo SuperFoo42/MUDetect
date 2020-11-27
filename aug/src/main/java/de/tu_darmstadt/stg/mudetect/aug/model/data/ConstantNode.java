@@ -3,6 +3,7 @@ package de.tu_darmstadt.stg.mudetect.aug.model.data;
 import de.tu_darmstadt.stg.mudetect.aug.model.BaseNode;
 import de.tu_darmstadt.stg.mudetect.aug.model.DataNode;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 public class ConstantNode extends BaseNode implements DataNode {
     private final String dataType;
@@ -10,6 +11,13 @@ public class ConstantNode extends BaseNode implements DataNode {
     private final String dataValue;
 
     public ConstantNode(String dataType, String dataName, String dataValue) {
+        this.dataType = dataType;
+        this.dataName = dataName;
+        this.dataValue = dataValue;
+    }
+
+    public ConstantNode(String dataType, String dataName, String dataValue, ASTNode astNode) {
+        super(astNode);
         this.dataType = dataType;
         this.dataName = dataName;
         this.dataValue = dataValue;

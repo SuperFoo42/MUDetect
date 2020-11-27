@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static edu.iastate.cs.egroum.aug.EGroumDataEdge.Type.*;
-import static java.util.stream.Collectors.toList;
 
 public class EGroumGraph implements Serializable {
 	private static final long serialVersionUID = -5128703931982211886L;

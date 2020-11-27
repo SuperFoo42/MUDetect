@@ -3,12 +3,19 @@ package de.tu_darmstadt.stg.mudetect.aug.model.data;
 import de.tu_darmstadt.stg.mudetect.aug.model.BaseNode;
 import de.tu_darmstadt.stg.mudetect.aug.model.DataNode;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 public class AnonymousClassMethodNode extends BaseNode implements DataNode {
     private final String baseType;
     private final String methodSignature;
 
     public AnonymousClassMethodNode(String baseType, String methodSignature) {
+        this.baseType = baseType;
+        this.methodSignature = methodSignature;
+    }
+
+    public AnonymousClassMethodNode(String baseType, String methodSignature, ASTNode astNode) {
+        super(astNode);
         this.baseType = baseType;
         this.methodSignature = methodSignature;
     }

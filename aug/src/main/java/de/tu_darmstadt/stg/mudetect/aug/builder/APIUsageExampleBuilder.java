@@ -110,27 +110,27 @@ public class APIUsageExampleBuilder {
     // Data Nodes
 
     public APIUsageExampleBuilder withAnonymousClassMethod(String nodeId, String baseType, String methodSignature, ASTNode astNode) {
-        return withNode(nodeId, new AnonymousClassMethodNode(baseType, methodSignature));
+        return withNode(nodeId, new AnonymousClassMethodNode(baseType, methodSignature, astNode));
     }
 
     public APIUsageExampleBuilder withAnonymousObject(String nodeId, String typeName, ASTNode astNode) {
-        return withNode(nodeId, new AnonymousObjectNode(typeName));
+        return withNode(nodeId, new AnonymousObjectNode(typeName, astNode));
     }
 
     public APIUsageExampleBuilder withException(String nodeId, String typeName, String variableName, ASTNode astNode) {
-        return withNode(nodeId, new ExceptionNode(typeName, variableName));
+        return withNode(nodeId, new ExceptionNode(typeName, variableName, astNode));
     }
 
     public APIUsageExampleBuilder withLiteral(String nodeId, String typeName, String value, ASTNode astNode) {
-        return withNode(nodeId, new LiteralNode(typeName, value));
+        return withNode(nodeId, new LiteralNode(typeName, value, astNode));
     }
 
     public APIUsageExampleBuilder withVariable(String nodeId, String dataTypeName, String variableName, ASTNode astNode) {
-        return withNode(nodeId, new VariableNode(dataTypeName, variableName));
+        return withNode(nodeId, new VariableNode(dataTypeName, variableName, astNode));
     }
 
     public APIUsageExampleBuilder withConstant(String nodeId, String dataType, String dataName, String dataValue, ASTNode astNode) {
-        return withNode(nodeId, new ConstantNode(dataType, dataName, dataValue));
+        return withNode(nodeId, new ConstantNode(dataType, dataName, dataValue, astNode));
     }
 
     // Data-Flow Edges

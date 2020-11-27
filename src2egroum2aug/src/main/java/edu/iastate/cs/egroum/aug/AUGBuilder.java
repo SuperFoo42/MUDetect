@@ -31,6 +31,7 @@ public class AUGBuilder {
         ASSIGNMENT_OPERATORS.add("<<");
         ASSIGNMENT_OPERATORS.add(">>>");
 
+        //TODO: what about ++ and ~ and --?
         UNARY_OPERATORS.add("!");
         UNARY_OPERATORS.add("+");
         UNARY_OPERATORS.add("-");

@@ -108,6 +108,8 @@ public class JavaASTUtil {
 				new String[]{"UTF-8"}, 
 				true);
 		parser.setResolveBindings(true);
+		//to actually enable binding resolve
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setBindingsRecovery(true);
 		parser.setSource(source.toCharArray());
     	parser.setUnitName(name);
