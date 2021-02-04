@@ -51,9 +51,25 @@ public class AUGBuilder {
     }
 
     public Collection<APIUsageExample> build(String[] sourcePaths, String[] classpaths) {
+        return build(sourcePaths, classpaths, new String[]{});
+    }
+
+    public Collection<APIUsageExample> build(String[] sourcePaths, String[] classpaths, String[] additionalPaths) {
         EGroumBuilder builder = new EGroumBuilder(configuration);
         return Arrays.stream(sourcePaths)
-                .flatMap(sourcePath -> builder.buildBatch(sourcePath, classpaths).stream())
+                .flatMap(sourcePath -> builder.buildBatch(sourcePath, classpaths, additionalPaths).stream())
+                .map(this::toAUG)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<APIUsageExample> build(String[] sourcePaths, String[] classpaths, Map<String, String> methods) {
+        return build(sourcePaths, classpaths, new String[]{}, methods);
+    }
+
+    public Collection<APIUsageExample> build(String[] sourcePaths, String[] classpaths, String[] additionalSourcePaths, Map<String, String> methods) {
+        EGroumBuilder builder = new EGroumBuilder(configuration);
+        return Arrays.stream(sourcePaths)
+                .flatMap(sourcePath -> builder.buildBatch(sourcePath, classpaths, additionalSourcePaths).stream())
                 .map(this::toAUG)
                 .collect(Collectors.toList());
     }
@@ -67,7 +83,19 @@ public class AUGBuilder {
     }
 
 	public Collection<APIUsageExample> build(String sourcePath, String[] classpaths) {
-        return build(new String[] {sourcePath}, classpaths);
+        return build(new String[] {sourcePath}, classpaths, new String[]{});
+    }
+
+    public Collection<APIUsageExample> build(String sourcePath, String[] classpaths, String[] additionalSourcePahts) {
+        return build(new String[] {sourcePath}, classpaths, additionalSourcePahts);
+    }
+
+    public Collection<APIUsageExample> buildAddMethods(String sourcePath, String[] classpaths, Map<String, String> methods) {
+        return buildAddMethods(sourcePath, classpaths, new String[]{}, methods);
+    }
+
+    public Collection<APIUsageExample> buildAddMethods(String sourcePath, String[] classpaths, String[] additionalSourcePaths, Map<String, String> methods) {
+        return build(new String[] {sourcePath}, classpaths, additionalSourcePaths, methods);
     }
 
     public Collection<WithAST<APIUsageExample>> buildWithAST(String sourcePath, String[] classpaths) {
