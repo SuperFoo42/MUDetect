@@ -10,12 +10,24 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 
 public class TargetSrcTypeHierarchyTest {
+
+    private static final String WINDOWS_CLASS_PATH_SPLIT = ";"; // Windows
+    private static final String LINUX_CLASS_PATH_SPLIT = ":";	// Linux
+    private static String CLASS_PATH_SPLIT = null;
+
+    static {
+        if (System.getProperty("os.name").startsWith("Windows"))
+            CLASS_PATH_SPLIT = WINDOWS_CLASS_PATH_SPLIT;
+        else
+            CLASS_PATH_SPLIT = LINUX_CLASS_PATH_SPLIT;
+    }
+
     private static TypeHierarchy hierarchy;
 
     @BeforeClass
     public static void setUp() {
         // Excluding project binary paths from classpath, because it slows down analysis manifold.
-        String[] projectDependencyClassPath = Arrays.stream(ClassPath.getClassPath().split(":"))
+        String[] projectDependencyClassPath = Arrays.stream(ClassPath.getClassPath().split(CLASS_PATH_SPLIT))
                 .filter(dependencyPath ->
                         !dependencyPath.endsWith("target/classes") &&
                         !dependencyPath.endsWith("target/test-classes"))

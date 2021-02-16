@@ -18,13 +18,20 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class AUGDotExporter {
-    private static final String WINDOWS_EXEC_DOT = "D:/Program Files (x86)/Graphviz2.36/bin/dot.exe";	// Windows
+    private static final String GRAPHVIZ_PATH = System.getenv("Graphviz");
+    private static final String WINDOWS_EXEC_DOT = GRAPHVIZ_PATH+"/dot.exe"; //"D:/Program Files (x86)/Graphviz2.36/bin/dot.exe";	// Windows
     private static final String LINUX_EXEC_DOT = "dot";	// Linux
     private static String EXEC_DOT = null;
 
     static {
         if (System.getProperty("os.name").startsWith("Windows"))
-            EXEC_DOT = WINDOWS_EXEC_DOT;
+            // checking whether Grpahviz path was set in environment variable
+            if(GRAPHVIZ_PATH!=null){
+                EXEC_DOT = WINDOWS_EXEC_DOT;
+            }
+            else{
+                System.err.println("No environment variable 'Graphviz' found targeting the installation path of dot.exe");
+            }
         else
             EXEC_DOT = LINUX_EXEC_DOT;
     }
