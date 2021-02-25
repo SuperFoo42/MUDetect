@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 public class AUGExportRunner {
-    private final static Logger LOGGER = Logger.getLogger(AUGExportRunner.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(AUGExportRunner.class.getSimpleName());
 
     public static void main(String[] args) throws Exception {
         new MuBenchRunner().withMineAndDetectStrategy((detectorArgs, builder) -> {
@@ -26,7 +26,7 @@ public class AUGExportRunner {
 
             PersistenceAUGDotExporter exporter = new PersistenceAUGDotExporter();
             Path exportDest = detectorArgs.getAdditionalOutputPath().resolve("export");
-            AUGDotExporter prettyPrinter = new AUGDotExporter(new BaseAUGLabelProvider(), new AUGNodeAttributeProvider(), new AUGEdgeAttributeProvider());
+            AUGDotExporter prettyPrinter = new AUGDotExporter(new BaseAUGLabelProvider(), node -> new AUGNodeAttributeProvider().getComponentAttributes(node), edge -> new AUGEdgeAttributeProvider().getComponentAttributes(edge));
             Path prettyPrintDest = detectorArgs.getAdditionalOutputPath().resolve("pretty");
             for (APIUsageExample aug : augs) {
                 try {

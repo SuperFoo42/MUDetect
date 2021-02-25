@@ -2,7 +2,9 @@ package de.tu_darmstadt.stg.mudetect.dot;
 
 import de.tu_darmstadt.stg.mudetect.aug.model.Edge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dot.AUGEdgeAttributeProvider;
+import de.tu_darmstadt.stg.mudetect.aug.persistence.StringAttribute;
 import de.tu_darmstadt.stg.mudetect.model.Overlap;
+import org.jgrapht.nio.Attribute;
 
 import java.util.Map;
 
@@ -16,11 +18,11 @@ class OverlapEdgeAttributeProvider extends AUGEdgeAttributeProvider {
     }
 
     @Override
-    public Map<String, String> getComponentAttributes(Edge edge) {
-        final Map<String, String> attributes = super.getComponentAttributes(edge);
+    public Map<String, Attribute> getComponentAttributes(Edge edge) {
+        final Map<String, Attribute> attributes = super.getComponentAttributes(edge);
         if (!violation.mapsEdge(edge)) {
-            attributes.put("color", unmappedNodeColor);
-            attributes.put("fontcolor", unmappedNodeColor);
+            attributes.put("color", new StringAttribute(unmappedNodeColor));
+            attributes.put("fontcolor", new StringAttribute(unmappedNodeColor));
         }
         return attributes;
     }

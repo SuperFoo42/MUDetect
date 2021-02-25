@@ -1,12 +1,13 @@
 package de.tu_darmstadt.stg.mudetect.aug.persistence;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import de.tu_darmstadt.stg.mudetect.aug.model.APIUsageGraph;
-import org.jgrapht.ext.ImportException;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ public class AUGReader<G extends APIUsageGraph> implements AutoCloseable {
         this.emptyGraphFactory = emptyGraphFactory;
     }
 
-    public G read() throws IOException, ImportException {
+    public G read() throws IOException {
         ZipEntry entry = zip.getNextEntry();
         if (entry == null) {
             return null;
@@ -32,12 +33,12 @@ public class AUGReader<G extends APIUsageGraph> implements AutoCloseable {
             ByteArrayOutputStream contentStream = new ByteArrayOutputStream();
             ByteStreams.copy(zip, contentStream);
             G graph = emptyGraphFactory.get();
-            importer.read(contentStream.toString(Charsets.UTF_8.name()), graph);
+            importer.importGraph(graph, new StringReader(contentStream.toString(StandardCharsets.UTF_8.name())));
             return graph;
         }
     }
 
-    public Collection<G> readAll() throws IOException, ImportException {
+    public Collection<G> readAll() throws IOException {
         Collection<G> augs = new ArrayList<>();
         G aug;
         while ((aug = read()) != null) {

@@ -6,7 +6,7 @@ import de.tu_darmstadt.stg.mudetect.aug.visitors.WithSourceLineNumberLabelProvid
 public class DisplayAUGDotExporter extends AUGDotExporter {
     public DisplayAUGDotExporter() {
         super(new WithSourceLineNumberLabelProvider(new BaseAUGLabelProvider()),
-                new AUGNodeAttributeProvider(),
-                new AUGEdgeAttributeProvider());
+                node -> new AUGNodeAttributeProvider().getComponentAttributes(node),
+                edge -> new AUGEdgeAttributeProvider().getComponentAttributes(edge));
     }
 }

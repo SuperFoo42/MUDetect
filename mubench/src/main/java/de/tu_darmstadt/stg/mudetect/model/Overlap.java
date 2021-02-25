@@ -6,7 +6,7 @@ import de.tu_darmstadt.stg.mudetect.aug.model.Edge;
 import de.tu_darmstadt.stg.mudetect.aug.model.Node;
 import de.tu_darmstadt.stg.mudetect.aug.model.actions.MethodCallNode;
 import de.tu_darmstadt.stg.mudetect.aug.model.patterns.APIUsagePattern;
-import org.jgrapht.graph.DirectedSubgraph;
+import org.jgrapht.graph.AsSubgraph;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 public class Overlap {
 
-    private final DirectedSubgraph<Node, Edge> patternOverlap;
-    private final DirectedSubgraph<Node, Edge> targetOverlap;
+    private final AsSubgraph<Node, Edge> patternOverlap;
+    private final AsSubgraph<Node, Edge> targetOverlap;
     private final Map<Node, Node> targetNodeByPatternNode = new HashMap<>();
     private final APIUsagePattern pattern;
     private final APIUsageExample target;
@@ -27,11 +27,11 @@ public class Overlap {
 
         final Set<Node> targetNodeSet = new HashSet<>(targetNodeByPatternNode.values());
         final Set<Edge> targetEdgeSet = new HashSet<>(targetEdgeByPatternEdge.values());
-        targetOverlap = new DirectedSubgraph<>(target, targetNodeSet, targetEdgeSet);
+        targetOverlap = new AsSubgraph<>(target, targetNodeSet, targetEdgeSet);
 
         final Set<Node> patternNodeSet = targetNodeByPatternNode.keySet();
         final Set<Edge> patternEdgeSet = targetEdgeByPatternEdge.keySet();
-        patternOverlap = new DirectedSubgraph<>(pattern, patternNodeSet, patternEdgeSet);
+        patternOverlap = new AsSubgraph<>(pattern, patternNodeSet, patternEdgeSet);
 
         this.targetNodeByPatternNode.putAll(targetNodeByPatternNode);
     }
@@ -43,8 +43,8 @@ public class Overlap {
         this.pattern = overlap.pattern;
         this.target = overlap.target;
 
-        this.targetOverlap = new DirectedSubgraph<>(target, overlap.targetOverlap.vertexSet(), overlap.targetOverlap.edgeSet());
-        this.patternOverlap = new DirectedSubgraph<>(pattern, overlap.patternOverlap.vertexSet(), overlap.patternOverlap.edgeSet());
+        this.targetOverlap = new AsSubgraph<>(target, overlap.targetOverlap.vertexSet(), overlap.targetOverlap.edgeSet());
+        this.patternOverlap = new AsSubgraph<>(pattern, overlap.patternOverlap.vertexSet(), overlap.patternOverlap.edgeSet());
 
         this.targetNodeByPatternNode.putAll(overlap.targetNodeByPatternNode);
     }
@@ -65,7 +65,7 @@ public class Overlap {
         return targetNodeByPatternNode.get(patternNode);
     }
 
-    public APIUsageExample getTarget() { return (APIUsageExample) targetOverlap.getBase(); }
+    public APIUsageExample getTarget() { return target; }
 
     public de.tu_darmstadt.stg.mudetect.aug.model.Location getLocation() {
         return getTarget().getLocation();

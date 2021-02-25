@@ -6,14 +6,17 @@ import de.tu_darmstadt.stg.mudetect.aug.model.APIUsageGraph;
 import de.tu_darmstadt.stg.mudetect.aug.model.Edge;
 import de.tu_darmstadt.stg.mudetect.aug.model.Node;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.AUGLabelProvider;
-import de.tu_darmstadt.stg.mudetect.aug.visitors.BaseAUGLabelProvider;
-import org.jgrapht.ext.ComponentAttributeProvider;
-import org.jgrapht.ext.DOTExporter;
-import org.jgrapht.ext.IntegerNameProvider;
-import org.jgrapht.ext.VertexNameProvider;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.IntegerIdProvider;
+import org.jgrapht.nio.dot.DOTExporter;
 
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -38,31 +41,31 @@ public class AUGDotExporter {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
-    private final IntegerNameProvider<Node> nodeIdProvider = new IntegerNameProvider<>();
+    private IntegerIdProvider<Node> nodeIdProvider = new IntegerIdProvider<>();
     private final DOTExporter<Node, Edge> exporter;
     private final AUGAttributeProvider<APIUsageGraph> graphAttributeProvider;
 
     public AUGDotExporter(AUGLabelProvider labelProvider,
-                          ComponentAttributeProvider<Node> nodeAttributeProvider,
-                          ComponentAttributeProvider<Edge> edgeAttributeProvider) {
+                          Function<Node,Map<java.lang.String, Attribute>> nodeAttributeProvider,
+                          Function<Edge,Map<java.lang.String, Attribute>>  edgeAttributeProvider) {
         this(labelProvider::getLabel, labelProvider::getLabel, nodeAttributeProvider, edgeAttributeProvider);
     }
 
     public AUGDotExporter(Function<Node, String> nodeLabelProvider,
                           Function<Edge, String> edgeLabelProvider,
-                          ComponentAttributeProvider<Node> nodeAttributeProvider,
-                          ComponentAttributeProvider<Edge> edgeAttributeProvider) {
+                          Function<Node,Map<java.lang.String, Attribute>> nodeAttributeProvider,
+                          Function<Edge,Map<java.lang.String, Attribute>>  edgeAttributeProvider) {
         this(nodeLabelProvider, edgeLabelProvider, nodeAttributeProvider, edgeAttributeProvider, null);
     }
 
     public AUGDotExporter(Function<Node, String> nodeLabelProvider,
                           Function<Edge, String> edgeLabelProvider,
-                          ComponentAttributeProvider<Node> nodeAttributeProvider,
-                          ComponentAttributeProvider<Edge> edgeAttributeProvider,
+                          Function<Node,Map<java.lang.String, Attribute>> nodeAttributeProvider,
+                          Function<Edge,Map<java.lang.String, Attribute>>  edgeAttributeProvider,
                           AUGAttributeProvider<APIUsageGraph> graphAttributeProvider) {
-        this.exporter = new DOTExporter<>(nodeIdProvider,
-                nodeLabelProvider::apply, edgeLabelProvider::apply,
-                nodeAttributeProvider, edgeAttributeProvider);
+        this.exporter = new DOTExporter<>(nodeIdProvider);
+        this.exporter.setVertexAttributeProvider(nodeAttributeProvider);
+        this.exporter.setEdgeAttributeProvider(edgeAttributeProvider);
         this.graphAttributeProvider = graphAttributeProvider;
     }
 
@@ -73,8 +76,8 @@ public class AUGDotExporter {
     }
 
     private void toDotGraph(APIUsageGraph aug, Writer writer) {
-        nodeIdProvider.clear();
-        exporter.export(new PrintWriter(writer) {
+        nodeIdProvider = new IntegerIdProvider<>();
+        exporter.exportGraph(aug, new PrintWriter(writer) {
             @Override
             public void write(String s, int off, int len) {
                 if (s.equals("digraph G {")) {
@@ -90,7 +93,7 @@ public class AUGDotExporter {
                     super.write(s, off, len);
                 }
             }
-        }, aug);
+        });
     }
 
     public void toDotFile(APIUsageGraph aug, File file) throws IOException {

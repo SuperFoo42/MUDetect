@@ -247,10 +247,9 @@ public class EGroumBuilder {
 
         try (Stream<Path> fileList = Files.walk(jarFilePath)){
             fileList.forEach(entryPath -> {
-                File entry = entryPath.toFile();
-                if (entry.getName().endsWith(".class") && entry.getName().startsWith("java")) {
+                if (entryPath.toUri().toString().endsWith(".class")) {
                     try {
-                        ClassParser parser = new ClassParser(jarFilePath.toAbsolutePath().toString(), entry.getName());
+                        ClassParser parser = new ClassParser(Files.newInputStream(entryPath), entryPath.toAbsolutePath().toString());
                         JavaClass jc = parser.parse();
                         String className = jc.getClassName();
                         className = className.replace('$', '.');
@@ -275,15 +274,11 @@ public class EGroumBuilder {
                         }
                         if (jc.getSuperclassName() != null) {
                             String stype = FileIO.getSimpleClassName(jc.getSuperclassName());
-                            HashSet<String> subs = EGroumBuildingContext.exceptionHierarchy.get(stype);
-                            if (subs == null) {
-                                subs = new HashSet<>();
-                                EGroumBuildingContext.exceptionHierarchy.put(stype, subs);
-                            }
+                            HashSet<String> subs = EGroumBuildingContext.exceptionHierarchy.computeIfAbsent(stype, k -> new HashSet<>());
                             subs.add(simpleClassName);
                         }
                     } catch (IOException | ClassFormatException e) {
-                        System.err.println("Error in parsing class file: " + entry.getName());
+                        System.err.println("Error in parsing class file: " + entryPath.toAbsolutePath().toString());
                         System.err.println(e.getMessage());
                     }
                 }
@@ -464,12 +459,11 @@ public class EGroumBuilder {
                 }
             }
         };
-        @SuppressWarnings("rawtypes")
-        Map options = JavaCore.getOptions();
+        Map<String,String> options = JavaCore.getOptions();
         options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
         options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
         options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-        ASTParser parser = ASTParser.newParser(AST.JLS8);
+        ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
         parser.setCompilerOptions(options);
         String[] encodings = null;
         if (sourcePaths != null) {
