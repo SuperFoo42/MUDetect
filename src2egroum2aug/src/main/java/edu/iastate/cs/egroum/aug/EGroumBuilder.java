@@ -246,7 +246,7 @@ public class EGroumBuilder {
     private void buildClassHierarchy(Path jarFilePath) {
 
         try (Stream<Path> fileList = Files.walk(jarFilePath)){
-            fileList.forEach(entryPath -> {
+            fileList.filter(path -> !path.endsWith("module-info.class")).forEach(entryPath -> {
                 if (entryPath.toUri().toString().endsWith(".class")) {
                     try {
                         ClassParser parser = new ClassParser(Files.newInputStream(entryPath), entryPath.toAbsolutePath().toString());
