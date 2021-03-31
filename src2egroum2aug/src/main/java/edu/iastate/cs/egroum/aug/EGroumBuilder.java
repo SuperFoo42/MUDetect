@@ -460,9 +460,9 @@ public class EGroumBuilder {
             }
         };
         Map<String,String> options = JavaCore.getOptions();
-        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_15);
+        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_15);
+        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_15);
         ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
         parser.setCompilerOptions(options);
         String[] encodings = null;
