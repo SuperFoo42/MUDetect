@@ -8,6 +8,9 @@
         <groupId>de.tu-darmstadt.stg.mudetect</groupId>
         <version>0.0.3-SNAPSHOT</version>
     </parent>
+    <properties>
+        <maven.compiler.release>11</maven.compiler.release>
+    </properties>
 
     <artifactId>aug</artifactId>
     <name>API-Usage Graphs</name>
